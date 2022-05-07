@@ -1,0 +1,32 @@
+version: '3'
+services:
+  php:
+    build:
+      context: ./docker
+      dockerfile: php.Dockerfile
+    container_name: php
+    volumes:
+      - './src:/var/www/html'
+    depends_on:
+      - mariadb
+  
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    ports:
+      - '80:80'
+      - '443:443'
+    links:
+      - 'php'
+    volumes:
+      - './src:/var/www/html'
+      - './config/nginx:/etc/nginx/conf.d'
+  
+  mariadb:
+    image: mariadb:10.3.9
+    container_name: mariadb
+    volumes:
+      - ./db:/var/lib/mysql
+    restart: 'on-failure'
+    environment:
+      MYSQL_ROOT_PASSWORD: root
