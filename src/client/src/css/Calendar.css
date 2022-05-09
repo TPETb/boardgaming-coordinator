@@ -1,0 +1,6 @@
+.rbc-month-row {
+    min-height: 16vh;
+}
+.rbc-toolbar {
+    flex-wrap: nowrap;
+}
