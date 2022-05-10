@@ -8,6 +8,7 @@ import VisibleDateRangeAtom from "../recoil/atoms/VisibleDateRangeAtom";
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import fetchEvents from "../persistence/fetchEvents";
 import dayjs from "dayjs";
+import EventDetailsPopup from "./EventDetailsPopup";
 
 Settings.defaultZone = 'Asia/Tbilisi';
 const localizer = luxonLocalizer(DateTime, { firstDayOfWeek: 1 });
@@ -18,6 +19,7 @@ function CalendarWrapper() {
     const user = useRecoilValue(CurrentUserAtom);
     const [events, setEvents] = useRecoilState(VisibleEventsAtom);
     const [range, setRange] = useRecoilState(VisibleDateRangeAtom);
+    const [selectedEvent, setSelectedEvent] = useState(null);
 
     useEffect(() => {
         if (!range) {
@@ -33,14 +35,21 @@ function CalendarWrapper() {
         setEvents(fetchEvents(range));
     };
 
+    const onEventClick = ({id}) => {
+        setSelectedEvent(id);
+    };
+
     return (
         <div style={{ height: '95vh' }}>
             <Calendar
+                onSelectEvent={onEventClick}
                 views={['month', 'day', 'week', 'agenda']}
                 localizer={localizer}
                 onRangeChange={onRangeChange}
                 events={events}
             />
+
+            {selectedEvent && <EventDetailsPopup id={selectedEvent} onClose={() => setSelectedEvent(null)}></EventDetailsPopup>}
         </div>
     );
 }
