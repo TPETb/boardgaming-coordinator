@@ -1,31 +1,28 @@
-import React, { useState } from 'react';
-import {
-    RecoilRoot, atom, selector, useRecoilState, useRecoilValue,
-} from 'recoil';
+import React from 'react';
+import { useRecoilValue, } from 'recoil';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
-import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal'
 import CurrentUserAtom from "../recoil/atoms/CurrentUserAtom";
-import { Col, InputGroup } from "react-bootstrap";
+import { Col } from "react-bootstrap";
 
-function EventViewPopup({event, onClose}) {
+function AffairViewPopup({affair, onClose}) {
     const currentUser = useRecoilValue(CurrentUserAtom);
 
     return (
         <Modal.Body>
             <Container fluid>
                 <Row>
-                    <Col>{event.title}</Col>
-                    <Col>{event.creator.id}</Col>
-                    <Col>{event.slots}</Col>
+                    <Col>{affair.title}</Col>
+                    <Col>{affair.creator.id}</Col>
+                    <Col>{affair.slots}</Col>
                 </Row>
                 <Row>
-                    <Col>{event.comment}</Col>
+                    <Col>{affair.comment}</Col>
                 </Row>
                 <Row>
                     <h4>Joined:</h4>
-                    {event.joined.map(user => (
+                    {affair.joined.map(user => (
                         <>{user.id}</>
                     ))}
                 </Row>
@@ -34,4 +31,4 @@ function EventViewPopup({event, onClose}) {
     );
 }
 
-export default EventViewPopup;
+export default AffairViewPopup;

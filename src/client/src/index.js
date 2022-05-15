@@ -1,5 +1,6 @@
 import { StrictMode } from 'react';
 import { render } from 'react-dom';
+import { RecoilRoot, } from 'recoil';
 
 import App from './App';
 import reportWebVitals from './reportWebVitals';
@@ -7,7 +8,9 @@ import reportWebVitals from './reportWebVitals';
 const rootElement = document.getElementById('root');
 render(
     <StrictMode>
-        <App />
+        <RecoilRoot>
+            <App />
+        </RecoilRoot>
     </StrictMode>,
     rootElement
 );

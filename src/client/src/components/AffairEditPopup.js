@@ -1,18 +1,16 @@
 import React, { useState } from 'react';
-import {
-    RecoilRoot, atom, selector, useRecoilState, useRecoilValue,
-} from 'recoil';
+import { useRecoilValue, } from 'recoil';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal'
 import CurrentUserAtom from "../recoil/atoms/CurrentUserAtom";
 import { InputGroup } from "react-bootstrap";
 
-function EventEditPopup({ event, onClose }) {
+function AffairEditPopup({ affair, onClose }) {
     const user = useRecoilValue(CurrentUserAtom);
-    const [eventName, setEventName] = useState(event.title);
-    const [slots, setSlots] = useState(event.slots);
-    const [comment, setComment] = useState(event.comment);
+    const [affairName, setAffairName] = useState(affair.title);
+    const [slots, setSlots] = useState(affair.slots);
+    const [comment, setComment] = useState(affair.comment);
 
     const saveChanges = () => {
         onClose();
@@ -27,8 +25,8 @@ function EventEditPopup({ event, onClose }) {
                         <InputGroup>
                             <InputGroup.Text>#</InputGroup.Text>
                             <Form.Control type="text" placeholder="#name"
-                                          value={eventName}
-                                          onChange={(event) => setEventName(event.target.value)} />
+                                          value={affairName}
+                                          onChange={(event) => setAffairName(event.target.value)} />
                         </InputGroup>
                     </Form.Group>
 
@@ -61,4 +59,4 @@ function EventEditPopup({ event, onClose }) {
     );
 }
 
-export default EventEditPopup;
+export default AffairEditPopup;

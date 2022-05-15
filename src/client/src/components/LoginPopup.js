@@ -1,17 +1,25 @@
+import axios from "axios";
 import React, { useState } from 'react';
 import { useRecoilState, } from 'recoil';
-import { Form, InputGroup, Button, Modal } from 'react-bootstrap';
+import { Button, Form, InputGroup, Modal } from 'react-bootstrap';
 import CurrentUserAtom from "../recoil/atoms/CurrentUserAtom";
 
 function LoginPopup() {
     const [user, setUser] = useRecoilState(CurrentUserAtom);
-
-    const [username, setUsername] = useState('');
+    const [username, setUsername] = useState(window.localStorage.getItem('username'));
     const [role, setRole] = useState('Admin');
 
-    const doLogin = () => {
+    const doLogin = async () => {
+        const {data} = await axios.post('/user/login', {
+            username
+        });
+
+        window.localStorage.setItem('username', username);
+
+        axios.defaults.headers.common['Authorization'] = data.token;
+
         setUser({
-            name: '@' + username.replaceAll(/[^a-zA-Z0-9_]/g, ''),
+            name: '@' + data.name,
             loggedIn: true,
             role,
         });
@@ -29,7 +37,8 @@ function LoginPopup() {
                     <InputGroup>
                         <InputGroup.Text>@</InputGroup.Text>
                         <Form.Control type="text" placeholder="name"
-                                      onChange={(event) => setUsername(event.target.value)} />
+                                      value={username}
+                                      onChange={(Affair) => setUsername(Affair.target.value)} />
                     </InputGroup>
                 </Form.Group>
 

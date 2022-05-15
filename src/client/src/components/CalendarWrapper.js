@@ -1,55 +1,84 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { Calendar, luxonLocalizer } from 'react-big-calendar';
 import { DateTime, Settings } from 'luxon';
 import { useRecoilState, useRecoilValue, } from 'recoil';
 import CurrentUserAtom from "../recoil/atoms/CurrentUserAtom";
-import VisibleEventsAtom from "../recoil/atoms/VisibleEventsAtom";
+import VisibleAffairsAtom from "../recoil/atoms/VisibleAffairsAtom";
 import VisibleDateRangeAtom from "../recoil/atoms/VisibleDateRangeAtom";
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-import fetchEvents from "../persistence/fetchEvents";
+import fetchAffairs from "../persistence/fetchAffairs";
 import dayjs from "dayjs";
-import EventDetailsPopup from "./EventDetailsPopup";
+import AffairDetailsPopup from "./AffairDetailsPopup";
+import AffairCreatePopup from "./AffairCreatePopup";
 
 Settings.defaultZone = 'Asia/Tbilisi';
 const localizer = luxonLocalizer(DateTime, { firstDayOfWeek: 1 });
 
-const defaultRange = {};
-
 function CalendarWrapper() {
     const user = useRecoilValue(CurrentUserAtom);
-    const [events, setEvents] = useRecoilState(VisibleEventsAtom);
+    const [affairs, setAffairs] = useRecoilState(VisibleAffairsAtom);
     const [range, setRange] = useRecoilState(VisibleDateRangeAtom);
-    const [selectedEvent, setSelectedEvent] = useState(null);
+    const [selectedAffair, setSelectedAffair] = useState(null);
+    const [selectedSlot, setSelectedSlot] = useState(null);
+    const clickRef = useRef(null);
+
+    useEffect(() => {
+        return () => {
+            window.clearTimeout(clickRef?.current)
+        }
+    }, []);
 
     useEffect(() => {
         if (!range) {
             const start = dayjs(new Date).subtract(7, "days");
             const end = dayjs(new Date).add(37, "days");
             setRange({ start, end });
-            setEvents(fetchEvents({ start, end }));
+            setAffairs(fetchAffairs({ start, end }));
         }
     });
 
     const onRangeChange = ({ start, end }) => {
         setRange({ start, end });
-        setEvents(fetchEvents(range));
+        setAffairs(fetchAffairs(range));
     };
 
-    const onEventClick = ({id}) => {
-        setSelectedEvent(id);
+    const onAffairClick = ({id}) => {
+        setSelectedAffair(id);
     };
+
+    const onSelectSlot = useCallback(({start}) => {
+        window.clearTimeout(clickRef?.current)
+        clickRef.current = window.setTimeout(() => {
+            setSelectedSlot(start);
+        }, 250)
+    }, [])
+
+    const onSelecting = useCallback(({start}) => {
+        window.clearTimeout(clickRef?.current)
+        clickRef.current = window.setTimeout(() => {
+            setSelectedSlot(start);
+        }, 250)
+    }, [])
 
     return (
         <div style={{ height: '95vh' }}>
             <Calendar
-                onSelectEvent={onEventClick}
+                onSelectEvent={onAffairClick}
                 views={['month', 'day', 'week', 'agenda']}
                 localizer={localizer}
                 onRangeChange={onRangeChange}
-                events={events}
+                events={affairs}
+                dayLayoutAlgorithm={'no-overlap'}
+                onSelecting={onSelecting}
+                onSelectSlot={onSelectSlot}
+                selectable
             />
 
-            {selectedEvent && <EventDetailsPopup id={selectedEvent} onClose={() => setSelectedEvent(null)}></EventDetailsPopup>}
+            {selectedSlot && <AffairCreatePopup start={selectedSlot}
+                                                onClose={() => setSelectedSlot(null)}/>}
+
+            {selectedAffair && <AffairDetailsPopup id={selectedAffair}
+                                                   onClose={() => setSelectedAffair(null)}/>}
         </div>
     );
 }

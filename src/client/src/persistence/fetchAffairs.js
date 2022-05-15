@@ -38,7 +38,7 @@ const games = [
     'цитадели'
 ];
 
-const events = Array.from(Array(100).keys()).map((value) => {
+const Affairs = Array.from(Array(100).keys()).map((value) => {
     const start = (new Date);
     start.setDate(Math.floor(Math.random() * 29));
     start.setHours(Math.floor(Math.random() * 8) + 15);
@@ -64,8 +64,8 @@ const events = Array.from(Array(100).keys()).map((value) => {
     };
 });
 
-function fetchEvents({ start, end }) {
-    return events;
+function fetchAffairs({ start, end }) {
+    return Affairs;
 }
 
-export default fetchEvents;
+export default fetchAffairs;
