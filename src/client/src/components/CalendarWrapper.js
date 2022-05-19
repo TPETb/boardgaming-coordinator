@@ -28,18 +28,18 @@ function CalendarWrapper() {
         }
     }, []);
 
-    useEffect(() => {
+    useEffect(async () => {
         if (!range) {
             const start = dayjs(new Date).subtract(7, "days");
             const end = dayjs(new Date).add(37, "days");
             setRange({ start, end });
-            setAffairs(fetchAffairs({ start, end }));
+            setAffairs(await fetchAffairs({ start, end }));
         }
     });
 
-    const onRangeChange = ({ start, end }) => {
+    const onRangeChange = async ({ start, end }) => {
         setRange({ start, end });
-        setAffairs(fetchAffairs(range));
+        setAffairs(await fetchAffairs({ start, end }));
     };
 
     const onAffairClick = ({id}) => {
@@ -75,7 +75,7 @@ function CalendarWrapper() {
             />
 
             {selectedSlot && <AffairCreatePopup start={selectedSlot}
-                                                onClose={() => setSelectedSlot(null)}/>}
+                                                close={() => setSelectedSlot(null)}/>}
 
             {selectedAffair && <AffairDetailsPopup id={selectedAffair}
                                                    onClose={() => setSelectedAffair(null)}/>}

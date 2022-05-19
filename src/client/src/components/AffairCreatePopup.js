@@ -10,7 +10,7 @@ import { useState } from "react";
 import createGame from "../persistence/createGame";
 import createAffair from "../persistence/createAffair";
 
-function AffairCreatePopup({ start, onClose }) {
+function AffairCreatePopup({ start, close }) {
     const currentUser = useRecoilValue(CurrentUserAtom);
 
     const [availableGames, setAvailableGames] = useRecoilState(AvailableGamesAtom);
@@ -28,13 +28,15 @@ function AffairCreatePopup({ start, onClose }) {
             start,
         });
 
-        // todo add newAffair into VisibleAffairsAtom
+        setVisibleAffairs(visibleAffairs.concat([newAffair]));
+
+        close();
     };
 
     return (<Modal
         show={true}
         keyboard={true}
-        onHide={onClose}
+        onHide={close}
     >
         <Modal.Header closeButton>
             <Modal.Title>Create Affair</Modal.Title>
@@ -77,7 +79,7 @@ function AffairCreatePopup({ start, onClose }) {
             </Form>
 
             <Modal.Footer>
-                <Button variant="secondary" onClick={onClose}>
+                <Button variant="secondary" onClick={close}>
                     Close
                 </Button>
                 <Button variant="primary" onClick={onCreateClick}>

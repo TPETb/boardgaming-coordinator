@@ -19,17 +19,15 @@ class AffairController extends Controller
     {
         $affairs = Affair::query()
             ->with(['host', 'game'])
-//            ->whereBetween('starts_at', [
-////                $request->get('min_starts_at'),
-////                $request->get('max_starts_at'),
-//                1651632318,
-//                1752632318,
-//            ])
+            ->whereBetween('starts_at', [
+                Carbon::parse($request->get('min_starts_at')),
+                Carbon::parse($request->get('max_starts_at')),
+            ])
         ;
 
         return response()->json($affairs->get()->map(function (Affair $affair) {
             return array_merge($affair->toArray(), [
-                'ends_at' => Carbon::parse($affair->starts_at)->toISOString()
+                'ends_at' => Carbon::parse($affair->starts_at)->addHour()->toISOString()
             ]);
         }));
     }

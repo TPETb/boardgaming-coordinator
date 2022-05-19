@@ -25,10 +25,13 @@ function App() {
 
         setGames(await fetchGames());
         setBooted(true);
+        setBooting(false);
     });
 
     return (
-        <MainScreen></MainScreen>
+        <>
+            {booted && (<MainScreen/>)}
+        </>
     );
 }
 

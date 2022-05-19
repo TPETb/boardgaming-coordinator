@@ -9,13 +9,11 @@ import { Container } from 'react-bootstrap';
 function MainScreen() {
     const user = useRecoilValue(CurrentUserAtom);
 
-    const [value, onChange] = useState(new Date());
-
     return (
         <Container fluid>
             <Header></Header>
 
-            <CalendarWrapper onChange={onChange} value={value} />
+            <CalendarWrapper/>
 
             {!user.loggedIn && (<LoginPopup></LoginPopup>)}
         </Container>
