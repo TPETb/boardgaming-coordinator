@@ -1,18 +1,20 @@
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useEffect, useState } from "react";
-import MainScreen from './components/MainScreen';
 import { useRecoilState, } from 'recoil';
 import axios from "axios";
-import AvailableGamesAtom from "./recoil/atoms/AvailableGamesAtom";
 import fetchGames from "./persistence/fetchGames";
+import MainScreen from './components/MainScreen';
+import AvailableGamesAtom from "./recoil/atoms/AvailableGamesAtom";
 import { initUserSessionFromLocalStorage } from "./initializers/UserSession";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterLuxon } from '@mui/x-date-pickers/AdapterLuxon';
 import fetchAffairs from "./persistence/fetchAffairs";
 import dayjs from "dayjs";
 import VisibleAffairsAtom from "./recoil/atoms/VisibleAffairsAtom";
-import { Settings } from "luxon";
+import { Settings } from 'luxon';
+
+Settings.defaultZone = 'system';
 
 function App() {
     const [games, setGames] = useRecoilState(AvailableGamesAtom);
@@ -25,8 +27,6 @@ function App() {
         if (booting || booted) {
             return;
         }
-
-        Settings.defaultZone = 'system';
 
         setBooting(true);
 
