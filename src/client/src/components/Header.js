@@ -14,7 +14,7 @@ function Header() {
 
     return (
         <Row className="justify-content-end">
-            <Col xs={"au"}>
+            <Col xs={"au"} style={{textAlign: "right"}}>
                 {user && (
                     <DropdownButton variant={'secondary'} id="dropdown-basic-button" title="Profile">
                         <Dropdown.Item onClick={()=>{}}>{user.name}</Dropdown.Item>

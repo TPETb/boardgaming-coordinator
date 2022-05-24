@@ -51,13 +51,13 @@ class AffairController extends Controller
         $affair = new Affair();
         $affair->host()->associate($currentUser);
         $affair->game()->associate($game);
-        $affair->starts_at = Carbon::parse($request->post('start'));
+        $affair->starts_at = Carbon::createFromTimestamp($request->post('start'));
         $affair->slots = $request->post('slots');
         $affair->comment = $request->post('comment');
         $affair->save();
 
         return response()->json(array_merge($affair->toArray(), [
-            'ends_at' => Carbon::parse($affair->starts_at)->toISOString()
+            'ends_at' => Carbon::parse($affair->starts_at)->addHour()->toISOString()
         ]));
     }
 

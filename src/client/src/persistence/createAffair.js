@@ -2,7 +2,10 @@ import axios from "axios";
 
 export const createAffair = async ({ gameName, slots, comment, start }) => {
     const affairRaw = (await axios.post('/affair', {
-        gameName, slots, comment, start
+        gameName,
+        slots,
+        comment,
+        start: start.toSeconds()
     })).data;
 
     affairRaw.title = affairRaw.game.name;

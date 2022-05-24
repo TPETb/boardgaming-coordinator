@@ -14,7 +14,7 @@ function AffairViewPopup({affair, onClose}) {
             <Container fluid>
                 <Row>
                     <Col>{affair.title}</Col>
-                    <Col>{affair.creator.id}</Col>
+                    <Col>{affair.host.name}</Col>
                     <Col>{affair.slots}</Col>
                 </Row>
                 <Row>
