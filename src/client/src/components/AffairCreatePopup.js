@@ -6,8 +6,11 @@ import VisibleAffairsAtom from "../recoil/atoms/VisibleAffairsAtom";
 import AvailableGamesAtom from "../recoil/atoms/AvailableGamesAtom";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
+import { AdapterLuxon } from '@mui/x-date-pickers/AdapterLuxon';
+import { DateTimePicker } from '@mui/x-date-pickers';
 import { useState } from "react";
 import createGame from "../persistence/createGame";
+import TextField from '@mui/material/TextField';
 import createAffair from "../persistence/createAffair";
 
 function AffairCreatePopup({ start, close }) {
@@ -46,6 +49,10 @@ function AffairCreatePopup({ start, close }) {
             <Form>
                 <Form.Group className="mb-3" controlId="start">
                     <Form.Label>Starts At:</Form.Label>
+                    <DateTimePicker onChange={()=>{}}
+                                    value={start}
+                                    renderInput={(props) => <TextField {...props} />}
+                                    minutesStep={30}/>
                     <Form.Control type="text"
                                   value={start}
                                   readOnly={true} />

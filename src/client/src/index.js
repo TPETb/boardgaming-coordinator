@@ -2,7 +2,7 @@ import { StrictMode } from 'react';
 import { render } from 'react-dom';
 import { RecoilRoot, } from 'recoil';
 import RecoilNexus from "recoil-nexus";
-
+import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
