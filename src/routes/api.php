@@ -25,6 +25,7 @@ Route::resources([
 
 Route::controller(UserController::class)->group(function () {
     Route::post('/user/login', 'login');
+    Route::post('/user/dev-login', 'devLogin');
 });
 
 //Route::middleware('auth:sanctum')->get('/user', function (Request $request) {

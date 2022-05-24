@@ -1,11 +1,12 @@
 import './App.css';
 import MainScreen from './components/MainScreen';
-import { RecoilRoot, useRecoilState, } from 'recoil';
+import { useRecoilState, } from 'recoil';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import AvailableGamesAtom from "./recoil/atoms/AvailableGamesAtom";
 import fetchGames from "./persistence/fetchGames";
+import { initUserSessionFromLocalStorage } from "./initializers/UserSession";
 
 function App() {
     const [games, setGames] = useRecoilState(AvailableGamesAtom);
@@ -23,6 +24,8 @@ function App() {
         axios.defaults.withCredentials = true;
         axios.defaults.baseURL = '/api';
 
+        await initUserSessionFromLocalStorage();
+
         setGames(await fetchGames());
         setBooted(true);
         setBooting(false);
@@ -30,7 +33,7 @@ function App() {
 
     return (
         <>
-            {booted && (<MainScreen/>)}
+            {booted && (<MainScreen />)}
         </>
     );
 }
