@@ -21,10 +21,10 @@ function AffairDetailsPopup({id, onClose}) {
             <Modal.Title>Affair Details</Modal.Title>
         </Modal.Header>
 
-        {(currentUser.role === 'Admin' || currentAffair.creator.id === currentUser.name) &&
+        {(currentUser.role === 'Admin' || currentAffair.host.id === currentUser.name) &&
             <AffairEditPopup onClose={onClose} affair={currentAffair}></AffairEditPopup>
         }
-        {(currentUser.role !== 'Admin' && currentAffair.creator.id !== currentUser.name) &&
+        {(currentUser.role !== 'Admin' && currentAffair.host.id !== currentUser.name) &&
             <AffairViewPopup onClose={onClose} affair={currentAffair}></AffairViewPopup>
         }
     </Modal>);

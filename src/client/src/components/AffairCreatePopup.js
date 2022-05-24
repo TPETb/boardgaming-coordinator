@@ -6,15 +6,15 @@ import VisibleAffairsAtom from "../recoil/atoms/VisibleAffairsAtom";
 import AvailableGamesAtom from "../recoil/atoms/AvailableGamesAtom";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
-import { AdapterLuxon } from '@mui/x-date-pickers/AdapterLuxon';
 import { DateTimePicker } from '@mui/x-date-pickers';
 import { useState } from "react";
-import createGame from "../persistence/createGame";
 import TextField from '@mui/material/TextField';
 import createAffair from "../persistence/createAffair";
 
-function AffairCreatePopup({ start, close }) {
+function AffairCreatePopup({ defaultStart, close }) {
     const currentUser = useRecoilValue(CurrentUserAtom);
+
+    const [start, setStart] = useState(defaultStart);
 
     const [availableGames, setAvailableGames] = useRecoilState(AvailableGamesAtom);
     const [visibleAffairs, setVisibleAffairs] = useRecoilState(VisibleAffairsAtom);
@@ -25,10 +25,7 @@ function AffairCreatePopup({ start, close }) {
 
     const onCreateClick = async () => {
         const newAffair = await createAffair({
-            gameName,
-            slots,
-            comment,
-            start,
+            gameName, slots, comment, start,
         });
 
         setVisibleAffairs(visibleAffairs.concat([newAffair]));
@@ -48,14 +45,16 @@ function AffairCreatePopup({ start, close }) {
         <Modal.Body>
             <Form>
                 <Form.Group className="mb-3" controlId="start">
-                    <Form.Label>Starts At:</Form.Label>
-                    <DateTimePicker onChange={()=>{}}
-                                    value={start}
-                                    renderInput={(props) => <TextField {...props} />}
-                                    minutesStep={30}/>
-                    <Form.Control type="text"
-                                  value={start}
-                                  readOnly={true} />
+                    <DateTimePicker
+                        label={'Starts At:'}
+                        ampm={false}
+                        onChange={(newStart) => {
+                            setStart(newStart)
+                        }}
+                        value={start}
+                        renderInput={(props) => <TextField {...props} />}
+                        minutesStep={30}
+                    />
                 </Form.Group>
 
                 <Form.Group className="mb-3" controlId="name">
