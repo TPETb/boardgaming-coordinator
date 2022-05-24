@@ -1,29 +1,33 @@
 import axios from "axios";
 import React, { useState } from 'react';
-import { useRecoilState, } from 'recoil';
 import { Button, Form, InputGroup, Modal } from 'react-bootstrap';
-import CurrentUserAtom from "../recoil/atoms/CurrentUserAtom";
+import TelegramLoginButton from 'react-telegram-login';
+import { initUserSession } from "../initializers/UserSession";
 
 function LoginPopup() {
-    const [user, setUser] = useRecoilState(CurrentUserAtom);
-    const [username, setUsername] = useState(window.localStorage.getItem('username'));
-    const [role, setRole] = useState('Admin');
+    const [username, setUsername] = useState('');
 
-    const doLogin = async () => {
-        const {data} = await axios.post('/user/login', {
-            username
-        });
+    const doTelegramLogin = async (telegramResponse) => {
+        const { data } = await axios.post('/user/login', telegramResponse);
 
-        window.localStorage.setItem('username', username);
-
-        axios.defaults.headers.common['Authorization'] = data.token;
-
-        setUser({
-            name: '@' + data.name,
-            loggedIn: true,
-            role,
-        });
+        await initUserSession(data, false, true);
     };
+
+    const doDevLogin = async () => {
+        const { data } = await axios.post('/user/dev-login', {
+            username,
+        });
+
+        await initUserSession(data, false, true);
+    };
+
+    const doGuestLogin = async () => {
+        await initUserSession({
+            name: 'Guest',
+            role: 'guest',
+            token: 'null,'
+        }, false, false);
+    }
 
     return (<Modal
         show={true}
@@ -31,28 +35,30 @@ function LoginPopup() {
         keyboard={false}
     >
         <Modal.Body>
-            <Form>
-                <Form.Group className="mb-3" controlId="name">
-                    <Form.Label>Telegram name</Form.Label>
-                    <InputGroup>
-                        <InputGroup.Text>@</InputGroup.Text>
-                        <Form.Control type="text" placeholder="name"
-                                      value={username}
-                                      onChange={(Affair) => setUsername(Affair.target.value)} />
-                    </InputGroup>
-                </Form.Group>
+            <div style={{ textAlign: 'center' }}>
+                <TelegramLoginButton dataOnauth={doTelegramLogin} botName={process.env.REACT_APP_TELEGRAM_BOT_USERNAME} />
+                <br />
+                - или -
+                <br />
+                <Button variant={'secondary'} onClick={doGuestLogin}>Я только посмотреть</Button>
 
-                <Form.Group className="mb-3" controlId="formBasicCheckbox">
-                    <Form.Label>Role</Form.Label>
-                    <Form.Check type="radio" name="role" label="Admin" checked={role === 'Admin'} onChange={() => setRole('Admin')} />
-                    <Form.Check type="radio" name="role" label="Authorised" checked={role === 'Authorised'} onChange={() => setRole('Authorised')} />
-                    <Form.Check type="radio" name="role" label="Guest" checked={role === 'Guest'} onChange={() => setRole('Guest')} />
-                </Form.Group>
+                {process.env.NODE_ENV === 'development' && (<Form>
+                        <hr />
+                        <span>Это только на локалке показывается!</span>
+                        <Form.Group className="mb-3" controlId="name">
+                            <InputGroup>
+                                <InputGroup.Text>@</InputGroup.Text>
+                                <Form.Control type="text" placeholder="name"
+                                              value={username}
+                                              onChange={(event) => setUsername(event.target.value)} />
+                            </InputGroup>
+                        </Form.Group>
 
-                <Button variant="primary" type="button" onClick={doLogin}>
-                    Login
-                </Button>
-            </Form>
+                        <Button variant="primary" type="button" onClick={doDevLogin}>
+                            Login
+                        </Button>
+                    </Form>)}
+            </div>
         </Modal.Body>
     </Modal>);
 }

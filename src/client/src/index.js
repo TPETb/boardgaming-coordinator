@@ -1,6 +1,7 @@
 import { StrictMode } from 'react';
 import { render } from 'react-dom';
 import { RecoilRoot, } from 'recoil';
+import RecoilNexus from "recoil-nexus";
 
 import App from './App';
 import reportWebVitals from './reportWebVitals';
@@ -9,6 +10,7 @@ const rootElement = document.getElementById('root');
 render(
     <StrictMode>
         <RecoilRoot>
+            <RecoilNexus />
             <App />
         </RecoilRoot>
     </StrictMode>,

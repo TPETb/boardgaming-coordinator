@@ -15,7 +15,7 @@ function MainScreen() {
 
             <CalendarWrapper/>
 
-            {!user.loggedIn && (<LoginPopup></LoginPopup>)}
+            {!user && (<LoginPopup></LoginPopup>)}
         </Container>
     );
 }
