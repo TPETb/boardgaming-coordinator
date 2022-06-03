@@ -1,32 +1,94 @@
 import React, { useState } from 'react';
-import { useRecoilValue, } from 'recoil';
-import Form from 'react-bootstrap/Form';
-import Button from 'react-bootstrap/Button';
-import Modal from 'react-bootstrap/Modal'
+import { useRecoilState, useRecoilValue, } from 'recoil';
+import { Badge, Button, CloseButton, Form, InputGroup, Modal } from "react-bootstrap";
+import { DateTimePicker } from "@mui/x-date-pickers";
+import { DateTime as LDateTime } from "luxon";
+import TextField from "@mui/material/TextField";
 import CurrentUserAtom from "../recoil/atoms/CurrentUserAtom";
-import { InputGroup } from "react-bootstrap";
+import AvailableGamesAtom from "../recoil/atoms/AvailableGamesAtom";
+import VisibleAffairsAtom from "../recoil/atoms/VisibleAffairsAtom";
+import FullScreenLoader from "./FullScreenLoader";
+import updateAffair from "../persistence/updateAffair";
+import joinAffair from "../persistence/joinAffair";
+import fetchAffairs from "../persistence/fetchAffairs";
+import leaveAffair from "../persistence/leaveAffair";
 
 function AffairEditPopup({ affair, onClose }) {
-    const user = useRecoilValue(CurrentUserAtom);
-    const [affairName, setAffairName] = useState(affair.title);
+    const currentUser = useRecoilValue(CurrentUserAtom);
+
+    const [availableGames, setAvailableGames] = useRecoilState(AvailableGamesAtom);
+    const [visibleAffairs, setVisibleAffairs] = useRecoilState(VisibleAffairsAtom);
+
+    const [start, setStart] = useState(affair.start);
+    const [gameName, setGameName] = useState(affair.game.name);
     const [slots, setSlots] = useState(affair.slots);
     const [comment, setComment] = useState(affair.comment);
 
-    const saveChanges = () => {
-        onClose();
+    const [loading, setLoading] = useState(false);
+
+    const saveChanges = async () => {
+        setLoading(true);
+
+        await updateAffair(affair.id, {
+            gameName, slots, comment, start
+        });
+
+        setLoading(false);
+    };
+
+    const join = async () => {
+        setLoading(true);
+
+        await joinAffair({
+            affair: affair.id,
+            user: currentUser.id,
+        });
+
+        setVisibleAffairs(await fetchAffairs());
+
+        setLoading(false);
+    };
+
+    const kick = async ({id, name, pivot}) => {
+        if (window.confirm(`Kick @${name} from affair?`)) {
+            setLoading(true);
+
+            await leaveAffair(pivot.id);
+
+            setVisibleAffairs(await fetchAffairs());
+
+            setLoading(false);
+        }
     };
 
     return (
         <>
+            {loading && <FullScreenLoader />}
+
             <Modal.Body>
                 <Form>
+                    <Form.Group className="mb-3" controlId="start">
+                        <DateTimePicker
+                            label={'Starts At:'}
+                            ampm={false}
+                            onChange={(newStart) => {
+                                setStart(newStart)
+                            }}
+                            minDateTime={LDateTime.now()}
+                            value={start}
+                            renderInput={(props) => <TextField {...props} />}
+                            minutesStep={30}
+                        />
+                    </Form.Group>
+
                     <Form.Group className="mb-3" controlId="name">
-                        <Form.Label>Game name</Form.Label>
+                        <Form.Label>Game</Form.Label>
                         <InputGroup>
                             <InputGroup.Text>#</InputGroup.Text>
-                            <Form.Control type="text" placeholder="#name"
-                                          value={affairName}
-                                          onChange={(event) => setAffairName(event.target.value)} />
+                            <Form.Select value={gameName}
+                                         onChange={(event) => setGameName(event.target.value)}>
+                                {availableGames.map((game) => (<option key={game.id}>{game.name}</option>))}
+                            </Form.Select>
                         </InputGroup>
                     </Form.Group>
 
@@ -44,6 +106,18 @@ function AffairEditPopup({ affair, onClose }) {
                                       value={comment}
                                       onChange={(event) => setComment(event.target.value)} />
                     </Form.Group>
+
+                    <Form.Group>
+                        <Form.Label>Participants</Form.Label>
+                        <div style={{ fontSize: "1.1rem" }}>
+                            {affair.participants.map(user => (
+                                <Badge key={user.id} pill bg={'success'} style={{ marginRight: '5px' }}>
+                                    @{user.name}
+                                    <CloseButton variant="white" onClick={() => kick(user)} style={{fontSize: '0.5rem'}} />
+                                </Badge>
+                            ))}
+                        </div>
+                    </Form.Group>
                 </Form>
             </Modal.Body>
 
@@ -51,6 +125,11 @@ function AffairEditPopup({ affair, onClose }) {
                 <Button variant="secondary" onClick={onClose}>
                     Close
                 </Button>
+
+                {!affair.participants.some(({ id }) => id === currentUser.id) && (
+                    <Button variant={'success'} onClick={join}>Join</Button>
+                )}
+
                 <Button variant="primary" onClick={saveChanges}>
                     Save Changes
                 </Button>

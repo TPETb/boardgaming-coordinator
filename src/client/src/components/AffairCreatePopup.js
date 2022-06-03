@@ -23,7 +23,7 @@ function AffairCreatePopup({ defaultStart, close }) {
 
     const onCreateClick = async () => {
         const newAffair = await createAffair({
-            gameName, slots, comment, start,
+            gameName, slots, comment, start, participants: [],
         });
 
         setVisibleAffairs(visibleAffairs.concat([newAffair]));
@@ -57,7 +57,7 @@ function AffairCreatePopup({ defaultStart, close }) {
                 </Form.Group>
 
                 <Form.Group className="mb-3" controlId="name">
-                    <Form.Label>Game name</Form.Label>
+                    <Form.Label>Game</Form.Label>
                     <InputGroup>
                         <InputGroup.Text>#</InputGroup.Text>
                         <Form.Select value={gameName}

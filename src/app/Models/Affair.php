@@ -23,4 +23,10 @@ class Affair extends Model
     {
         return $this->belongsTo(Game::class);
     }
+
+
+    public function participants()
+    {
+        return $this->belongsToMany(User::class, 'participations')->withPivot(['id']);
+    }
 }
