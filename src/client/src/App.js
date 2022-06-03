@@ -5,14 +5,14 @@ import { useRecoilState, } from 'recoil';
 import axios from "axios";
 import fetchGames from "./persistence/fetchGames";
 import MainScreen from './components/MainScreen';
-import AvailableGamesAtom from "./recoil/atoms/AvailableGamesAtom";
 import { initUserSessionFromLocalStorage } from "./initializers/UserSession";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterLuxon } from '@mui/x-date-pickers/AdapterLuxon';
 import fetchAffairs from "./persistence/fetchAffairs";
-import dayjs from "dayjs";
+import AvailableGamesAtom from "./recoil/atoms/AvailableGamesAtom";
 import VisibleAffairsAtom from "./recoil/atoms/VisibleAffairsAtom";
 import { Settings } from 'luxon';
+import FullScreenLoader from "./components/FullScreenLoader";
 
 Settings.defaultZone = 'system';
 
@@ -37,10 +37,7 @@ function App() {
 
         const [games, affairs] = await Promise.all([
             fetchGames(),
-            fetchAffairs({
-                start: dayjs(new Date).subtract(7, "days"),
-                end: dayjs(new Date).add(67, "days"),
-            })
+            fetchAffairs(),
         ]);
 
         setGames(games);
@@ -54,6 +51,8 @@ function App() {
         <>
             <LocalizationProvider dateAdapter={AdapterLuxon}>
                 {booted && (<MainScreen />)}
+
+                {booting && (<FullScreenLoader />)}
             </LocalizationProvider>
         </>
     );

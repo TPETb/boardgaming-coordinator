@@ -2,7 +2,7 @@ import CurrentUserAtom from "../recoil/atoms/CurrentUserAtom";
 import axios from "axios";
 import { setRecoil } from "recoil-nexus";
 
-export const initUserSession = async ({ name, token, role }, verify = false, store = true) => {
+export const initUserSession = async ({ id, name, token, role }, verify = false, store = true) => {
     axios.defaults.headers.common['Authorization'] = token;
 
     if (verify) {
@@ -10,11 +10,11 @@ export const initUserSession = async ({ name, token, role }, verify = false, sto
     }
 
     if (store) {
-        localStorage.setItem('user', JSON.stringify({ name, token, role }));
+        localStorage.setItem('user', JSON.stringify({ id, name, token, role }));
     }
 
     setRecoil(CurrentUserAtom, {
-        name, role,
+        id, name, role,
     });
 };
 

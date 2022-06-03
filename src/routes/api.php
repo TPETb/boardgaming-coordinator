@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AffairController;
 use App\Http\Controllers\GameController;
+use App\Http\Controllers\ParticipationController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -21,6 +22,7 @@ Route::resources([
     'user' => UserController::class,
     'game' => GameController::class,
     'affair' => AffairController::class,
+    'participation' => ParticipationController::class,
 ]);
 
 Route::controller(UserController::class)->group(function () {
