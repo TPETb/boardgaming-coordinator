@@ -57,7 +57,8 @@ class AffairController extends Controller
         $affair->save();
 
         return response()->json(array_merge($affair->toArray(), [
-            'ends_at' => Carbon::parse($affair->starts_at)->addHour()->toISOString()
+            'ends_at' => Carbon::parse($affair->starts_at)->addHour()->toISOString(),
+            'participants' => [],
         ]));
     }
 
