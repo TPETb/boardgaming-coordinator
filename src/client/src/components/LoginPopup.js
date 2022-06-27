@@ -13,7 +13,9 @@ function LoginPopup() {
         await initUserSession(data, false, true);
     };
 
-    const doDevLogin = async () => {
+    const doDevLogin = async (event) => {
+        event.preventDefault();
+
         const { data } = await axios.post('/user/dev-login', {
             username,
         });
@@ -22,6 +24,8 @@ function LoginPopup() {
     };
 
     const doGuestLogin = async () => {
+        alert("Внимание! В режиме гостя нельзя создавать или присоединяться к событиям. Для выхода из этого решима просто перезагрузите страницу.");
+
         await initUserSession({
             name: 'Guest',
             role: 'guest',
@@ -42,7 +46,8 @@ function LoginPopup() {
                 <br />
                 <Button variant={'secondary'} onClick={doGuestLogin}>Я только посмотреть</Button>
 
-                {process.env.NODE_ENV === 'development' && (<Form>
+                {process.env.NODE_ENV === 'development' && (
+                    <Form onSubmit={doDevLogin}>
                         <hr />
                         <span>Это только на локалке показывается!</span>
                         <Form.Group className="mb-3" controlId="name">
@@ -54,10 +59,11 @@ function LoginPopup() {
                             </InputGroup>
                         </Form.Group>
 
-                        <Button variant="primary" type="button" onClick={doDevLogin}>
+                        <Button variant="primary" type="submit">
                             Login
                         </Button>
-                    </Form>)}
+                    </Form>
+                )}
             </div>
         </Modal.Body>
     </Modal>);
