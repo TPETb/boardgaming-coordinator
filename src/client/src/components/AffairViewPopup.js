@@ -46,11 +46,11 @@ function AffairViewPopup({ affair, onClose }) {
                 <Table borderless striped>
                     <tbody>
                     <tr>
-                        <td>Game</td>
+                        <td>Игра</td>
                         <td>{affair.title}</td>
                     </tr>
                     <tr>
-                        <td>When</td>
+                        <td>Начало в</td>
                         <td>{dayjs(affair.start).format('dddd, MMMM D, hh:mm')}</td>
                     </tr>
                     <tr>
@@ -62,15 +62,15 @@ function AffairViewPopup({ affair, onClose }) {
                         </td>
                     </tr>
                     <tr>
-                        <td>Slots</td>
+                        <td>Максимальное число участников</td>
                         <td>{affair.slots}</td>
                     </tr>
                     <tr>
-                        <td>Comment</td>
+                        <td>Комментарий</td>
                         <td>{affair.comment}</td>
                     </tr>
                     <tr>
-                        <td>Participants</td>
+                        <td>Участники</td>
                         <td>
                             <div style={{ fontSize: "1.1rem" }}>
                                 {affair.participants.map(user => (
@@ -85,15 +85,15 @@ function AffairViewPopup({ affair, onClose }) {
 
             <Modal.Footer>
                 <Button variant="secondary" onClick={onClose}>
-                    Close
+                    Отмена
                 </Button>
 
-                {affair.participants.some(({ id }) => id === currentUser.id) && (
-                    <Button variant={'danger'} onClick={leave}>Leave</Button>
+                {currentUser.id && affair.participants.some(({ id }) => id === currentUser.id) && (
+                    <Button variant={'danger'} onClick={leave}>Отказаться от участия</Button>
                 )}
 
-                {!affair.participants.some(({ id }) => id === currentUser.id) && (
-                    <Button variant={'success'} onClick={join}>Join</Button>
+                {currentUser.id && !affair.participants.some(({ id }) => id === currentUser.id) && (
+                    <Button variant={'success'} onClick={join}>Присоединиться</Button>
                 )}
             </Modal.Footer>
         </>

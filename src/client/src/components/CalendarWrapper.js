@@ -1,8 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Calendar, luxonLocalizer } from 'react-big-calendar';
-import { DateTime, Settings } from 'luxon';
-import { useRecoilState, useRecoilValue, } from 'recoil';
-import CurrentUserAtom from "../recoil/atoms/CurrentUserAtom";
+import { DateTime } from 'luxon';
+import { useRecoilState, } from 'recoil';
 import VisibleAffairsAtom from "../recoil/atoms/VisibleAffairsAtom";
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import AffairDetailsPopup from "./AffairDetailsPopup";
@@ -11,12 +10,10 @@ import AffairCreatePopup from "./AffairCreatePopup";
 const localizer = luxonLocalizer(DateTime, { firstDayOfWeek: 1 });
 
 function CalendarWrapper() {
-    const user = useRecoilValue(CurrentUserAtom);
     const [affairs, setAffairs] = useRecoilState(VisibleAffairsAtom);
 
     const [selectedAffair, setSelectedAffair] = useState(null);
     const [selectedSlot, setSelectedSlot] = useState(null);
-    const [viewMode, setViewMode] = useState('month');
 
     const clickRef = useRef(null);
 
@@ -61,6 +58,16 @@ function CalendarWrapper() {
                 onSelecting={onSelecting}
                 onSelectSlot={onSelectSlot}
                 selectable
+                messages={{
+                    day: 'День',
+                    week: 'Неделя',
+                    month: 'Месяц',
+                    agenda: 'Список',
+                    previous: 'Пред.',
+                    next: 'След.',
+                    today: 'Сегодня',
+                    showMore: (total) => `+ еще ${total}`,
+                }}
             />
 
             {selectedSlot && <AffairCreatePopup defaultStart={selectedSlot}

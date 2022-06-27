@@ -13,14 +13,14 @@ function Header() {
     }
 
     return (
-        <Row className="justify-content-end">
+        <Row className="justify-content-end"  style={{marginBottom: '10px'}}>
             <Col xs={"au"} style={{textAlign: "right"}}>
                 {user && (
-                    <DropdownButton variant={'secondary'} id="dropdown-basic-button" title="Profile">
+                    <DropdownButton variant={'secondary'} id="dropdown-basic-button" title="Мой профиль">
                         <Dropdown.Item onClick={()=>{}}>{user.name}</Dropdown.Item>
                         <Dropdown.Item onClick={()=>{}}>{user.role}</Dropdown.Item>
                         <Dropdown.Divider />
-                        <Dropdown.Item onClick={doLogout}>Logout</Dropdown.Item>
+                        <Dropdown.Item onClick={doLogout}>Выйти</Dropdown.Item>
                     </DropdownButton>
                 )}
             </Col>

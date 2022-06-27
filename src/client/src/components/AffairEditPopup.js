@@ -50,7 +50,7 @@ function AffairEditPopup({ affair, onClose }) {
     };
 
     const kick = async ({id, name, pivot}) => {
-        if (window.confirm(`Kick @${name} from affair?`)) {
+        if (window.confirm(`Отказать @${name} в участии?`)) {
             setLoading(true);
 
             await leaveAffair(pivot.id);
@@ -61,6 +61,10 @@ function AffairEditPopup({ affair, onClose }) {
         }
     };
 
+    if (!currentUser.id) {
+        return null;
+    }
+
     return (
         <>
             {loading && <FullScreenLoader />}
@@ -69,7 +73,7 @@ function AffairEditPopup({ affair, onClose }) {
                 <Form>
                     <Form.Group className="mb-3" controlId="start">
                         <DateTimePicker
-                            label={'Starts At:'}
+                            label={'Начало в:'}
                             ampm={false}
                             onChange={(newStart) => {
                                 setStart(newStart)
@@ -82,7 +86,7 @@ function AffairEditPopup({ affair, onClose }) {
                     </Form.Group>
 
                     <Form.Group className="mb-3" controlId="name">
-                        <Form.Label>Game</Form.Label>
+                        <Form.Label>Игра</Form.Label>
                         <InputGroup>
                             <InputGroup.Text>#</InputGroup.Text>
                             <Form.Select value={gameName}
@@ -93,14 +97,14 @@ function AffairEditPopup({ affair, onClose }) {
                     </Form.Group>
 
                     <Form.Group className="mb-3" controlId="slots">
-                        <Form.Label>Slots</Form.Label>
+                        <Form.Label>Максимальное число участников</Form.Label>
                         <Form.Control type="number" placeholder=""
                                       value={slots}
                                       onChange={(event) => setSlots(event.target.value)} />
                     </Form.Group>
 
                     <Form.Group className="mb-3" controlId="comment">
-                        <Form.Label>Comment</Form.Label>
+                        <Form.Label>Комментарий</Form.Label>
                         <Form.Control type="text" placeholder=""
                                       as="textarea" rows={3}
                                       value={comment}
@@ -108,7 +112,7 @@ function AffairEditPopup({ affair, onClose }) {
                     </Form.Group>
 
                     <Form.Group>
-                        <Form.Label>Participants</Form.Label>
+                        <Form.Label>Участники</Form.Label>
                         <div style={{ fontSize: "1.1rem" }}>
                             {affair.participants.map(user => (
                                 <Badge key={user.id} pill bg={'success'} style={{ marginRight: '5px' }}>
@@ -123,15 +127,15 @@ function AffairEditPopup({ affair, onClose }) {
 
             <Modal.Footer>
                 <Button variant="secondary" onClick={onClose}>
-                    Close
+                    Отмена
                 </Button>
 
                 {!affair.participants.some(({ id }) => id === currentUser.id) && (
-                    <Button variant={'success'} onClick={join}>Join</Button>
+                    <Button variant={'success'} onClick={join}>Присоединиться</Button>
                 )}
 
                 <Button variant="primary" onClick={saveChanges}>
-                    Save Changes
+                    Сохранить
                 </Button>
             </Modal.Footer>
         </>

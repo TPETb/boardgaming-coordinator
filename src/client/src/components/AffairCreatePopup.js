@@ -22,6 +22,11 @@ function AffairCreatePopup({ defaultStart, close }) {
     const [comment, setComment] = useState('');
 
     const onCreateClick = async () => {
+        if (+start < +DateTime.now()) {
+            alert("Нельзя создавать событие в прошлом... Ну серьезно...");
+            return;
+        }
+
         const newAffair = await createAffair({
             gameName, slots, comment, start, participants: [],
         });
@@ -31,68 +36,71 @@ function AffairCreatePopup({ defaultStart, close }) {
         close();
     };
 
-    return (<Modal
-        show={true}
-        keyboard={true}
-        onHide={close}
-    >
-        <Modal.Header closeButton>
-            <Modal.Title>Create Affair</Modal.Title>
-        </Modal.Header>
+    if (!currentUser.id) {
+        return null;
+    }
 
-        <Modal.Body>
-            <Form>
-                <Form.Group className="mb-3" controlId="start">
-                    <DateTimePicker
-                        label={'Starts At:'}
-                        ampm={false}
-                        onChange={(newStart) => {
-                            setStart(newStart)
-                        }}
-                        minDateTime={DateTime.now()}
-                        value={start}
-                        renderInput={(props) => <TextField {...props} />}
-                        minutesStep={30}
-                    />
-                </Form.Group>
+    return (
+        <Modal show={true} keyboard={true} onHide={close}>
+            <Modal.Header closeButton>
+                <Modal.Title>Создать событие</Modal.Title>
+            </Modal.Header>
 
-                <Form.Group className="mb-3" controlId="name">
-                    <Form.Label>Game</Form.Label>
-                    <InputGroup>
-                        <InputGroup.Text>#</InputGroup.Text>
-                        <Form.Select value={gameName}
-                                     onChange={(event) => setGameName(event.target.value)}>
-                            {availableGames.map((game) => (<option>{game.name}</option>))}
-                        </Form.Select>
-                    </InputGroup>
-                </Form.Group>
+            <Modal.Body>
+                <Form>
+                    <Form.Group className="mb-3" controlId="start">
+                        <DateTimePicker
+                            label={'Начало в:'}
+                            ampm={false}
+                            onChange={(newStart) => {
+                                setStart(newStart)
+                            }}
+                            minDateTime={DateTime.now()}
+                            value={start}
+                            renderInput={(props) => <TextField {...props} />}
+                            minutesStep={30}
+                        />
+                    </Form.Group>
 
-                <Form.Group className="mb-3" controlId="slots">
-                    <Form.Label>Slots</Form.Label>
-                    <Form.Control type="number" placeholder=""
-                                  value={slots}
-                                  onChange={(event) => setSlots(event.target.value)} />
-                </Form.Group>
+                    <Form.Group className="mb-3" controlId="name">
+                        <Form.Label>Игра</Form.Label>
+                        <InputGroup>
+                            <InputGroup.Text>#</InputGroup.Text>
+                            <Form.Select value={gameName}
+                                         onChange={(event) => setGameName(event.target.value)}>
+                                {availableGames.map((game) => (<option key={game.id}>{game.name}</option>))}
+                            </Form.Select>
+                        </InputGroup>
+                    </Form.Group>
 
-                <Form.Group className="mb-3" controlId="comment">
-                    <Form.Label>Comment</Form.Label>
-                    <Form.Control type="text" placeholder=""
-                                  as="textarea" rows={3}
-                                  value={comment}
-                                  onChange={(event) => setComment(event.target.value)} />
-                </Form.Group>
-            </Form>
+                    <Form.Group className="mb-3" controlId="slots">
+                        <Form.Label>Максимальное число участников</Form.Label>
+                        <Form.Control type="number" placeholder=""
+                                      value={slots}
+                                      onChange={(event) => setSlots(event.target.value)} />
+                    </Form.Group>
+
+                    <Form.Group className="mb-3" controlId="comment">
+                        <Form.Label>Комментарий</Form.Label>
+                        <Form.Control type="text" placeholder=""
+                                      as="textarea" rows={3}
+                                      value={comment}
+                                      onChange={(event) => setComment(event.target.value)} />
+                    </Form.Group>
+                </Form>
+            </Modal.Body>
 
             <Modal.Footer>
                 <Button variant="secondary" onClick={close}>
-                    Close
+                    Отмена
                 </Button>
+
                 <Button variant="primary" onClick={onCreateClick}>
-                    Create
+                    Создать
                 </Button>
             </Modal.Footer>
-        </Modal.Body>
-    </Modal>);
+        </Modal>
+    );
 }
 
 export default AffairCreatePopup;
